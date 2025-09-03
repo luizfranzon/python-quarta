@@ -18,7 +18,7 @@ def inserir_categoria():
 
     conexao = conectar()
     cursor = conexao.cursor()
-    cursor.execute("INSERT INTO categorias (nome) VALUES (%s)", (nome,))
+    cursor.execute("INSERT INTO categoria (nome) VALUES (%s)", (nome,))
     conexao.commit()
     cursor.close()
     conexao.close()
@@ -32,7 +32,7 @@ def listar():
 
     conexao = conectar()
     cursor = conexao.cursor()
-    cursor.execute("SELECT * FROM categorias")
+    cursor.execute("SELECT * FROM categoria")
     for row in cursor.fetchall():
         tree.insert("", "end", values=row)
     cursor.close()

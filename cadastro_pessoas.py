@@ -15,16 +15,17 @@ def conectar():
 def inserir():
     nome = entry_nome.get()
     email = entry_email.get()
+    senha = entry_senha.get()
     telefone = entry_telefone.get()
 
-    if not nome or not email or not telefone:
+    if not nome or not email or not telefone or not senha:
         messagebox.showwarning("Campos vazios", "Preencha todos os campos.")
         return
 
     conexao = conectar()
     cursor = conexao.cursor()
-    cursor.execute("INSERT INTO pessoas (nome, email, telefone) VALUES (%s, %s, %s)",
-                   (nome, email, telefone))
+    cursor.execute("INSERT INTO clientes (nome, e-mail, senha, telefone) VALUES (%s, %s, %s, %s)",
+                   (nome, email, senha, telefone))
     conexao.commit()
     cursor.close()
     conexao.close()
@@ -41,12 +42,13 @@ def atualizar():
     id_pessoa = tree.item(selecionado)["values"][0]
     nome = entry_nome.get()
     email = entry_email.get()
+    senha = entry_senha()
     telefone = entry_telefone.get()
 
     conexao = conectar()
     cursor = conexao.cursor()
-    cursor.execute("UPDATE pessoas SET nome=%s, email=%s, telefone=%s WHERE id=%s",
-                   (nome, email, telefone, id_pessoa))
+    cursor.execute("UPDATE pessoas SET nome=%s, 'e-mail'=%s, senha=%s, telefone=%s WHERE id=%s",
+                   (nome, email, senha, telefone, id_pessoa))
     conexao.commit()
     cursor.close()
     conexao.close()
@@ -78,7 +80,7 @@ def listar():
 
     conexao = conectar()
     cursor = conexao.cursor()
-    cursor.execute("SELECT * FROM pessoas")
+    cursor.execute("SELECT * FROM clientes")
     for row in cursor.fetchall():
         tree.insert("", "end", values=row)
     cursor.close()
@@ -87,16 +89,17 @@ def listar():
 def limpar_campos():
     entry_nome.delete(0, tk.END)
     entry_email.delete(0, tk.END)
+    entry_senha.delete(0, tk.END)
     entry_telefone.delete(0, tk.END)
 
 def iniciar():
 
 # Interface
-    global entry_nome, entry_email, entry_telefone, tree
+    global entry_nome, entry_email, entry_telefone, entry_senha, tree
 
     janela = tk.Toplevel()
     janela.title("Cadastro de Pessoas")
-    janela.geometry("600x400")
+    janela.geometry("1100x400")
 
     # Campos
     tk.Label(janela, text="Nome").grid(row=0, column=0)
@@ -107,21 +110,26 @@ def iniciar():
     entry_email = tk.Entry(janela)
     entry_email.grid(row=1, column=1)
 
-    tk.Label(janela, text="Telefone").grid(row=2, column=0)
+    tk.Label(janela, text="Senha").grid(row=2, column=0)
+    entry_senha = tk.Entry(janela)
+    entry_senha.grid(row=2, column=1)
+
+    tk.Label(janela, text="Telefone").grid(row=3, column=0)
     entry_telefone = tk.Entry(janela)
-    entry_telefone.grid(row=2, column=1)
+    entry_telefone.grid(row=3, column=1)
 
     # Botões
-    tk.Button(janela, text="Inserir", command=inserir).grid(row=3, column=0, pady=10)
-    tk.Button(janela, text="Atualizar", command=atualizar).grid(row=3, column=1)
-    tk.Button(janela, text="Remover", command=remover).grid(row=3, column=2)
+    tk.Button(janela, text="Inserir", command=inserir).grid(row=4, column=0, pady=10)
+    tk.Button(janela, text="Atualizar", command=atualizar).grid(row=4, column=1)
+    tk.Button(janela, text="Remover", command=remover).grid(row=4, column=2)
 
     # Tabela
-    tree = ttk.Treeview(janela, columns=("ID", "Nome", "Email", "Telefone"), show="headings")
+    tree = ttk.Treeview(janela, columns=("ID", "Nome", "Email", "Senha", "Telefone"), show="headings")
     tree.heading("ID", text="ID")
     tree.heading("Nome", text="Nome")
     tree.heading("Email", text="Email")
+    tree.heading("Senha", text="Senha")
     tree.heading("Telefone", text="Telefone")
-    tree.grid(row=4, column=0, columnspan=3, padx=10, pady=10)
+    tree.grid(row=5, column=0, columnspan=3, padx=10, pady=10)
 
     listar()
