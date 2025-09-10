@@ -1,19 +1,17 @@
 import tkinter as tk
 from tkinter import messagebox
 
-import cadastro_pessoas
-import cadastro_produtos
-import cadastro_categorias
-
 # Funções de exemplo
-def cadastrar_pessoa():
-    cadastro_pessoas.iniciar()
-   # messagebox.showinfo("Cadastro", "Cadastro de Pessoa iniciado.")
+def cadastrar_cliente():
+    import cadastro_clientes
+    cadastro_clientes.iniciar()
 
 def cadastrar_produto():
+    import cadastro_produtos
     cadastro_produtos.iniciar()
 
 def abrir_categorias():
+    import cadastro_categorias
     cadastro_categorias.iniciar()
 
 def sair():
@@ -21,8 +19,8 @@ def sair():
 
 # Janela principal
 root = tk.Tk()
-root.title("Sistema de Cadastro")
-root.geometry("500x300")
+root.title("Sistema de Comércio")
+root.geometry("800x600")
 
 # Barra de menu
 menu_bar = tk.Menu(root)
@@ -31,8 +29,7 @@ root.config(menu=menu_bar)
 # Menu "Cadastros"
 menu_cadastros = tk.Menu(menu_bar, tearoff=0)
 menu_bar.add_cascade(label="Cadastros", menu=menu_cadastros)
-
-menu_cadastros.add_command(label="Cadastrar Pessoa", command=cadastrar_pessoa)
+menu_cadastros.add_command(label="Cadastrar Cliente", command=cadastrar_cliente)
 menu_cadastros.add_command(label="Cadastrar Produto", command=cadastrar_produto)
 menu_cadastros.add_command(label="Cadastrar Categoria", command=abrir_categorias)
 
