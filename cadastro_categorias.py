@@ -52,7 +52,7 @@ def iniciar():
     janela.geometry("400x300")
 
     tk.Label(janela, text="Nome da Categoria").pack()
-    entry_nome = tk.Entry(janela)
+    entry_nome = tk.Entry(janela)   
     entry_nome.pack()
 
     tk.Label(janela, text="Descrição da Categoria").pack()

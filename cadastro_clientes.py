@@ -1,6 +1,6 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
 import mysql.connector
+from tkinter import ttk, messagebox
 
 # Conexão com o banco
 def conectar():
@@ -17,6 +17,7 @@ def inserir():
     email = entry_email.get()
     telefone = entry_telefone.get()
     senha = entry_senha.get()
+    dataNascimento = entry_dataNascimento.get()
 
     if not nome or not email or not telefone or not senha:
         messagebox.showwarning("Campos vazios", "Preencha todos os campos.")
@@ -25,8 +26,8 @@ def inserir():
     conexao = conectar()
     cursor = conexao.cursor()
     cursor.execute(
-        "INSERT INTO Clientes (nome, `e-mail`, telefone, senha) VALUES (%s, %s, %s, %s)",
-        (nome, email, telefone, senha)
+        "INSERT INTO Clientes (nome, `e-mail`, telefone, senha, dataNascimento) VALUES (%s, %s, %s, %s, %s)",
+        (nome, email, telefone, senha, dataNascimento)
     )
     conexao.commit()
     cursor.close()
@@ -38,6 +39,7 @@ def inserir():
 
 def atualizar():
     selecionado = tree.selection()
+    
     if not selecionado:
         messagebox.showwarning("Seleção", "Selecione um cliente.")
         return
@@ -47,6 +49,7 @@ def atualizar():
     email = entry_email.get()
     telefone = entry_telefone.get()
     senha = entry_senha.get()
+    dataNascimento = entry_dataNascimento.get()
 
     conexao = conectar()
     cursor = conexao.cursor()
@@ -100,9 +103,10 @@ def limpar_campos():
     entry_email.delete(0, tk.END)
     entry_telefone.delete(0, tk.END)
     entry_senha.delete(0, tk.END)
+    entry_dataNascimento.delete(0, tk.END)
 
 def iniciar():
-    global entry_nome, entry_email, entry_telefone, tree, entry_senha
+    global entry_nome, entry_dataNascimento, entry_email, entry_telefone, tree, entry_senha
 
     # Interface
     janela = tk.Toplevel()
@@ -125,16 +129,20 @@ def iniciar():
     tk.Label(janela, text="Senha").grid(row=3, column=0, padx=5, pady=5)
     entry_senha = tk.Entry(janela, show="*")
     entry_senha.grid(row=3, column=1, padx=5, pady=5)
+    
+    tk.Label(janela, text="Data Nascimento").grid(row=4, column=0, padx=5, pady=5)
+    entry_dataNascimento = tk.Entry(janela)
+    entry_dataNascimento.grid(row=4, column=1, padx=5, pady=5)
 
     # Botões
-    tk.Button(janela, text="Inserir", command=inserir).grid(row=4, column=0, pady=10)
-    tk.Button(janela, text="Atualizar", command=atualizar).grid(row=4, column=1, pady=10)
-    tk.Button(janela, text="Remover", command=remover).grid(row=4, column=2, pady=10)
+    tk.Button(janela, text="Inserir", command=inserir).grid(row=5, column=0, pady=10)
+    tk.Button(janela, text="Atualizar", command=atualizar).grid(row=5, column=1, pady=10)
+    tk.Button(janela, text="Remover", command=remover).grid(row=5, column=2, pady=10)
 
     # Tabela
     tree = ttk.Treeview(
         janela,
-        columns=("ID", "Nome", "Email", "Telefone", "Senha"),
+        columns=("ID", "Nome", "Email", "Telefone", "Senha", "Data"),
         show="headings"
     )
     tree.heading("ID", text="ID")
@@ -142,7 +150,8 @@ def iniciar():
     tree.heading("Email", text="Email")
     tree.heading("Telefone", text="Telefone")
     tree.heading("Senha", text="Senha")
-    tree.grid(row=5, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
+    tree.heading("Data", text="Data Nascimento")
+    tree.grid(row=6, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
 
     # Expandir tabela ao redimensionar
     janela.grid_rowconfigure(5, weight=1)
