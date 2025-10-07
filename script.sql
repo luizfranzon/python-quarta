@@ -1,34 +1,29 @@
--- Desabilita verificações temporariamente
 SET @OLD_UNIQUE_CHECKS = @@UNIQUE_CHECKS, UNIQUE_CHECKS = 0;
 SET @OLD_FOREIGN_KEY_CHECKS = @@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS = 0;
 SET @OLD_SQL_MODE = @@SQL_MODE;
-SET SQL_MODE = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,
-ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+SET SQL_MODE = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
 
--- Criação do schema
 CREATE SCHEMA IF NOT EXISTS `ecommerce` DEFAULT CHARACTER SET utf8;
 USE `ecommerce`;
 
--- Tabela Clientes
 CREATE TABLE IF NOT EXISTS `Clientes` (
     `idClientes` INT NOT NULL AUTO_INCREMENT,
     `nome` VARCHAR(45) NOT NULL,
     `e-mail` VARCHAR(45) NOT NULL,
-    `senha` VARCHAR(45) NOT NULL,
+    `senha` VARCHAR(128) NOT NULL,
     `telefone` VARCHAR(45) NULL,
     `dataNascimento` DATE NULL,
-    PRIMARY KEY (`idClientes`)
-) ENGINE = InnoDB;
+    PRIMARY KEY (`idClientes`),
+    UNIQUE KEY `uk_Clientes_email` (`e-mail`)
+ ) ENGINE = InnoDB;
 
--- Tabela Categoria
 CREATE TABLE IF NOT EXISTS `Categoria` (
     `idCategoria` INT NOT NULL AUTO_INCREMENT,
     `nome` VARCHAR(45) NOT NULL,
     `descricao` VARCHAR(45) NULL,
     PRIMARY KEY (`idCategoria`)
-) ENGINE = InnoDB;
+ ) ENGINE = InnoDB;
 
--- Tabela Produtos
 CREATE TABLE IF NOT EXISTS `Produtos` (
     `idProdutos` INT NOT NULL AUTO_INCREMENT,
     `nome` VARCHAR(45) NOT NULL,
@@ -38,6 +33,7 @@ CREATE TABLE IF NOT EXISTS `Produtos` (
     `peso` DECIMAL(10,2) NULL,
     `estoque` INT NULL,
     `Categoria_idCategoria` INT NOT NULL,
+    `ativo` TINYINT(1) NOT NULL DEFAULT 1,
     PRIMARY KEY (`idProdutos`),
     INDEX `fk_Produtos_Categoria1_idx` (`Categoria_idCategoria` ASC),
     CONSTRAINT `fk_Produtos_Categoria1`
@@ -45,9 +41,8 @@ CREATE TABLE IF NOT EXISTS `Produtos` (
         REFERENCES `Categoria` (`idCategoria`)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+ ) ENGINE = InnoDB;
 
--- Tabela Pedidos
 CREATE TABLE IF NOT EXISTS `Pedidos` (
     `idPedidos` INT NOT NULL AUTO_INCREMENT,
     `dataPedido` DATE NULL,
@@ -61,9 +56,8 @@ CREATE TABLE IF NOT EXISTS `Pedidos` (
         REFERENCES `Clientes` (`idClientes`)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+ ) ENGINE = InnoDB;
 
--- Tabela ItemPedido
 CREATE TABLE IF NOT EXISTS `ItemPedido` (
     `idItemPedido` INT NOT NULL AUTO_INCREMENT,
     `quantidade` INT NULL,
@@ -83,9 +77,8 @@ CREATE TABLE IF NOT EXISTS `ItemPedido` (
         REFERENCES `Produtos` (`idProdutos`)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+ ) ENGINE = InnoDB;
 
--- Tabela Endereco
 CREATE TABLE IF NOT EXISTS `Endereco` (
     `idEndereco` INT NOT NULL AUTO_INCREMENT,
     `rua` VARCHAR(45) NULL,
@@ -102,9 +95,8 @@ CREATE TABLE IF NOT EXISTS `Endereco` (
         REFERENCES `Clientes` (`idClientes`)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+ ) ENGINE = InnoDB;
 
--- Tabela Pagamento
 CREATE TABLE IF NOT EXISTS `Pagamento` (
     `idPagamento` INT NOT NULL,
     `tipo` VARCHAR(45) NOT NULL,
@@ -119,9 +111,53 @@ CREATE TABLE IF NOT EXISTS `Pagamento` (
         REFERENCES `Pedidos` (`idPedidos`)
         ON DELETE NO ACTION
         ON UPDATE NO ACTION
-) ENGINE = InnoDB;
+ ) ENGINE = InnoDB;
 
--- Restaura configurações anteriores
 SET SQL_MODE = @OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;
+
+ALTER TABLE `Clientes` MODIFY COLUMN `senha` VARCHAR(128) NOT NULL;
+
+SET @sql_idx := (
+    SELECT IF(
+        EXISTS(
+            SELECT 1 FROM information_schema.statistics 
+            WHERE table_schema = DATABASE() 
+                AND table_name = 'Clientes' 
+                AND index_name = 'uk_Clientes_email'
+        ),
+        'SELECT 1',
+        'ALTER TABLE `Clientes` ADD UNIQUE KEY `uk_Clientes_email` (`e-mail`)'
+    )
+);
+PREPARE stmt FROM @sql_idx; EXECUTE stmt; DEALLOCATE PREPARE stmt;
+
+SET @sql_col := (
+    SELECT IF(
+        EXISTS(
+            SELECT 1 FROM information_schema.columns
+            WHERE table_schema = DATABASE()
+                AND table_name = 'Produtos'
+                AND column_name = 'ativo'
+        ),
+        'SELECT 1',
+        'ALTER TABLE `Produtos` ADD COLUMN `ativo` TINYINT(1) NOT NULL DEFAULT 1'
+    )
+);
+PREPARE stmt2 FROM @sql_col; EXECUTE stmt2; DEALLOCATE PREPARE stmt2;
+
+DELIMITER $$
+DROP PROCEDURE IF EXISTS buscar_produto $$
+CREATE PROCEDURE buscar_produto(IN p_nome VARCHAR(100))
+BEGIN
+    SELECT p.idProdutos AS ID,
+        p.nome       AS Nome,
+        p.preco      AS Preco,
+        c.nome       AS Categoria
+    FROM Produtos p
+    JOIN Categoria c ON c.idCategoria = p.Categoria_idCategoria
+    WHERE p.ativo = 1
+      AND (p.nome LIKE CONCAT('%', p_nome, '%') OR p_nome IS NULL OR p_nome = '');
+END $$
+DELIMITER ;

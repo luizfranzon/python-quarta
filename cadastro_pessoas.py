@@ -2,7 +2,6 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 import mysql.connector
 
-# Conexão com o banco
 def conectar():
     return mysql.connector.connect(
         host="localhost",
@@ -11,7 +10,6 @@ def conectar():
         database="ecommerce"
     )
 
-# Funções de banco
 def inserir():
     nome = entry_nome.get()
     email = entry_email.get()
@@ -94,14 +92,12 @@ def limpar_campos():
 
 def iniciar():
 
-# Interface
     global entry_nome, entry_email, entry_telefone, entry_senha, tree
 
     janela = tk.Toplevel()
     janela.title("Cadastro de Pessoas")
     janela.geometry("1100x400")
 
-    # Campos
     tk.Label(janela, text="Nome").grid(row=0, column=0)
     entry_nome = tk.Entry(janela)
     entry_nome.grid(row=0, column=1)
@@ -118,12 +114,10 @@ def iniciar():
     entry_telefone = tk.Entry(janela)
     entry_telefone.grid(row=3, column=1)
 
-    # Botões
     tk.Button(janela, text="Inserir", command=inserir).grid(row=4, column=0, pady=10)
     tk.Button(janela, text="Atualizar", command=atualizar).grid(row=4, column=1)
     tk.Button(janela, text="Remover", command=remover).grid(row=4, column=2)
 
-    # Tabela
     tree = ttk.Treeview(janela, columns=("ID", "Nome", "Email", "Senha", "Telefone"), show="headings")
     tree.heading("ID", text="ID")
     tree.heading("Nome", text="Nome")
