@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+<h2>Lista de Alunos</h2>
+<ul>
+    {% for aluno in alunos %}
+    <li>{{ aluno.nome }} ({{ aluno.idade }} anos)</li>
+    {% endfor %}
+</ul>
+<a href="{{ url_for('index') }}">Voltar</a>

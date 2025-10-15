@@ -69,6 +69,12 @@ def nova_matricula():
     return render_template('nova_matricula.html', alunos=alunos, cursos=cursos)
 
 
+@app.route('/alunos', methods=['GET'])
+def render_alunos():
+    alunos = Aluno.query.all()
+    return render_template('alunos.html', alunos=alunos)
+
+
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
