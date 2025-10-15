@@ -1,0 +1,7 @@
+<h2>Lista de Cursos</h2>
+<ul>
+ {% for curso in cursos %}
+ <li>{{ curso.nome }}</li>
+ {% endfor %}
+</ul>
+<a href="{{ url_for('index') }}">Voltar</a>
