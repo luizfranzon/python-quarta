@@ -1,0 +1,140 @@
+{
+  "v": 10,
+  "name": "faculdade_flask",
+  "requests": [],
+  "auth": {
+    "authType": "none",
+    "authActive": true
+  },
+  "headers": [],
+  "_ref_id": "coll_mgslqgv7_374dfdb1-7055-4139-82f7-ef9d6290127f",
+  "variables": [],
+  "folders": [
+    {
+      "v": 10,
+      "name": "alunos",
+      "requests": [
+        {
+          "v": "16",
+          "name": "Listar Alunos",
+          "method": "GET",
+          "endpoint": "http://localhost:5000/api/alunos",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "_ref_id": "req_mgslstix_1ca3d70d-8bef-4d5d-ad81-a77e96fcbc99"
+        },
+        {
+          "v": "16",
+          "name": "Criar aluno",
+          "method": "POST",
+          "endpoint": "http://localhost:5000/api/alunos",
+          "params": [],
+          "headers": [],
+          "preRequestScript": "",
+          "testScript": "",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"nome\": \"Luiz\",\n  \"idade\": 22\n}\n"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "_ref_id": "req_mgslstix_1ca3d70d-8bef-4d5d-ad81-a77e96fcbc99"
+        }
+      ],
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "headers": [],
+      "_ref_id": "coll_mgslskwx_86daf13d-405d-4e3f-b65a-ce68ec68bce2",
+      "variables": [],
+      "folders": []
+    },
+    {
+      "v": 10,
+      "name": "matriculas",
+      "folders": [],
+      "requests": [
+        {
+          "v": "16",
+          "endpoint": "http://localhost:5000/api/matriculas",
+          "name": "Criar matricula",
+          "params": [],
+          "headers": [],
+          "method": "POST",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": "application/json",
+            "body": "{\n  \"aluno_id\": 1,\n  \"curso_id\": 1\n}"
+          },
+          "requestVariables": [],
+          "responses": {},
+          "_ref_id": "req_mgsm3a1s_1ae57420-564d-49f9-a9ab-423f89e6506e"
+        }
+      ],
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "headers": [],
+      "variables": [],
+      "_ref_id": "coll_mgsm1esh_febec7be-2efe-4261-8634-c44f50506e4a"
+    },
+    {
+      "v": 10,
+      "name": "relatorio",
+      "folders": [],
+      "requests": [
+        {
+          "v": "16",
+          "endpoint": "http://localhost:5000/api/relatorio",
+          "name": "Gerar relatório",
+          "params": [],
+          "headers": [],
+          "method": "GET",
+          "auth": {
+            "authType": "inherit",
+            "authActive": true
+          },
+          "preRequestScript": "",
+          "testScript": "",
+          "body": {
+            "contentType": null,
+            "body": null
+          },
+          "requestVariables": [],
+          "responses": {},
+          "_ref_id": "req_mgsm29zw_efa8da6c-f9a5-4430-b4d3-d738a7f4d2b7"
+        }
+      ],
+      "auth": {
+        "authType": "inherit",
+        "authActive": true
+      },
+      "headers": [],
+      "variables": [],
+      "_ref_id": "coll_mgsm22zc_e56aaf72-a786-4404-87d0-22fbe3cf6f5f"
+    }
+  ]
+}
